@@ -71,9 +71,9 @@ const CatalogPage = () => {
   
   /* --- ★ここから追記・変更 --- */
   position: 'sticky',   // 固定する設定
-  top: '90px',          // 上のヘッダーの高さ分あける（環境に合わせて調整！）
+  top: '70px',          // 上のヘッダーの高さ分あける（環境に合わせて調整！）
   zIndex: 100,          // 他の要素より手前に
-  // backgroundColor: '#1a4d3e', // 透けないように背景色を指定（画面の背景色に合わせてください）
+   backgroundColor: '#518f7cff', // 透けないように背景色を指定（画面の背景色に合わせてください）
   padding: '10px 0',    // 少し上下に余白をつけて見やすく
   /* --- ★ここまで --- */
 }}>
@@ -94,9 +94,9 @@ const CatalogPage = () => {
   
   /* --- ★ここから追記・変更 --- */
   position: 'sticky',
-  top: '150px',         // ヘッダー(60px) + パンくず(約40px) = 100px
+  top: '130px',         // ヘッダー(60px) + パンくず(約40px) = 100px
   zIndex: 90,           // パンくずよりは少し後ろ、リストよりは手前
-  // backgroundColor: '#1a4d3e', // ここも透けないように背景色を指定
+  backgroundColor: '#518f7cff', // ここも透けないように背景色を指定
   /* --- ★ここまで --- */
 }}>
         <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} style={{ width: 'auto', margin: 0, padding: '8px' }}>
