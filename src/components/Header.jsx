@@ -6,9 +6,13 @@ const Header = () => {
   return (
     <header className="glass-panel" style={{
       position: 'sticky',
-      top: 0,
+      /* ★ここを変更: 0ではなく10pxにすることで、常に上から10pxの隙間を空けて固定されます */
+      top: '10px', 
       zIndex: 100,
-      margin: '10px 10px', // マージンを少し詰める
+      
+      /* ★ここを変更: 上の隙間はtopで作ったので、マージンは横と下だけ残します */
+      margin: '0 10px 10px 10px', 
+      
       padding: '10px 15px',
       display: 'flex',
       justifyContent: 'space-between',
