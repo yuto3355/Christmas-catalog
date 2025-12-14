@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
-import { collection, addDoc } from 'firebase/firestore';
-import { FaLock, FaUnlock } from 'react-icons/fa';
+import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { FaLock, FaTrash } from 'react-icons/fa';
 
 const AdminPage = () => {
-  // 管理者パスワード設定 (必要に応じて変更してください)
   const ADMIN_PASSWORD = "xmas2025"; 
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [inputPassword, setInputPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
-  // 登録フォーム用ステート
+  // 商品リスト管理用
+  const [presents, setPresents] = useState([]);
+  const [loadingList, setLoadingList] = useState(false);
+
+  // price をステートに復活
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -23,7 +26,20 @@ const AdminPage = () => {
   });
   const [message, setMessage] = useState('');
 
-  // パスワード確認処理
+  const fetchPresents = async () => {
+    setLoadingList(true);
+    const querySnapshot = await getDocs(collection(db, 'presents'));
+    const itemList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setPresents(itemList);
+    setLoadingList(false);
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchPresents();
+    }
+  }, [isAuthenticated]);
+
   const handleLogin = (e) => {
     e.preventDefault();
     if (inputPassword === ADMIN_PASSWORD) {
@@ -46,14 +62,30 @@ const AdminPage = () => {
     try {
       await addDoc(collection(db, 'presents'), {
         ...formData,
-        price: Number(formData.price),
+        price: Number(formData.price), // データベースには保存する
         createdAt: new Date()
       });
       setMessage('✅ 登録しました！');
-      setFormData({ ...formData, name: '', price: '', description: '' }); // 次の入力のために一部リセット
+      // 次の入力のためにフォームをクリア（カテゴリなどは維持）
+      setFormData({ ...formData, name: '', price: '', imageUrl: '', purchaseUrl: '', description: '' }); 
+      fetchPresents();
+      
+      setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       console.error(error);
       setMessage('❌ エラーが発生しました');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if(!window.confirm('本当に削除しますか？')) return;
+    try {
+      await deleteDoc(doc(db, 'presents', id));
+      setPresents(presents.filter(item => item.id !== id));
+      alert('削除しました');
+    } catch (error) {
+      console.error(error);
+      alert('削除に失敗しました');
     }
   };
 
@@ -64,15 +96,12 @@ const AdminPage = () => {
         <div className="glass-panel" style={{ padding: '40px', maxWidth: '400px', width: '100%', textAlign: 'center' }}>
           <FaLock size={40} color="var(--accent-gold)" style={{ marginBottom: '20px' }} />
           <h2 style={{ marginTop: 0 }}>管理者アクセス</h2>
-          <p style={{ fontSize: '0.9rem', marginBottom: '20px' }}>合言葉を入力してください</p>
-          
           <form onSubmit={handleLogin}>
             <input 
               type="password" 
               value={inputPassword} 
               onChange={(e) => setInputPassword(e.target.value)} 
               placeholder="Password"
-              autoFocus
               style={{ textAlign: 'center', fontSize: '1.2rem' }}
             />
             {loginError && <p style={{ color: 'var(--accent-red)', fontWeight: 'bold' }}>{loginError}</p>}
@@ -85,23 +114,25 @@ const AdminPage = () => {
     );
   }
 
-  // --- 認証後の登録画面 (以前と同じ) ---
+  // --- 認証後の登録画面 ---
   return (
-    <div className="container" style={{ maxWidth: '600px', position: 'relative', zIndex: 1 }}>
+    <div className="container" style={{ maxWidth: '600px', position: 'relative', zIndex: 1, paddingBottom: '150px' }}>
+      
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2 style={{ margin: 0 }}>🎁 商品登録 (Admin)</h2>
+        <h2 style={{ margin: 0 }}>🎁 商品登録</h2>
         <button onClick={() => setIsAuthenticated(false)} className="btn-secondary" style={{ fontSize: '0.8rem' }}>
-          <FaLock /> ロックする
+          <FaLock /> ロック
         </button>
       </div>
 
-      <div className="glass-panel" style={{ padding: '30px' }}>
+      <div className="glass-panel" style={{ padding: '20px', marginBottom: '40px' }}>
         <form onSubmit={handleSubmit}>
           <label>商品名</label>
-          <input name="name" value={formData.name} onChange={handleChange} required placeholder="例: クリスマスブレンドコーヒー" />
+          <input name="name" value={formData.name} onChange={handleChange} required placeholder="商品名" />
 
-          <label>価格 (円)</label>
-          <input name="price" type="number" value={formData.price} onChange={handleChange} required placeholder="3000" />
+          {/* 価格入力を復活（サイト非表示の注釈付き） */}
+          <label>価格 (円) <span style={{fontSize: '0.8rem', color: '#ccc'}}>※サイトには表示されません</span></label>
+          <input name="price" type="number" value={formData.price} onChange={handleChange} placeholder="3000" />
 
           <label>画像URL</label>
           <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} required placeholder="https://..." />
@@ -119,13 +150,46 @@ const AdminPage = () => {
             {['癒し', 'ユニーク', '便利', 'おしゃれ', '学び', 'ワクワク'].map(t => <option key={t} value={t}>{t}</option>)}
           </select>
 
-          <label>紹介文</label>
-          <textarea name="description" value={formData.description} onChange={handleChange} rows="4" required placeholder="商品の魅力を入力..." />
+          <label>紹介文 (改行可)</label>
+          <textarea name="description" value={formData.description} onChange={handleChange} rows="5" required placeholder="商品の魅力を入力..." style={{ whiteSpace: 'pre-wrap' }} />
 
-          <button type="submit" className="btn-primary" style={{ width: '100%', borderRadius: '8px' }}>登録する</button>
+          <button type="submit" className="btn-primary" style={{ width: '100%', borderRadius: '8px', padding: '15px', fontSize: '1.1rem', marginTop: '10px' }}>
+            登録する
+          </button>
         </form>
-        {message && <p className="text-center" style={{ marginTop: '10px', fontWeight: 'bold' }}>{message}</p>}
+        {message && <p className="text-center" style={{ marginTop: '15px', fontWeight: 'bold', color: 'var(--accent-gold)' }}>{message}</p>}
       </div>
+
+      {/* --- 商品一覧 --- */}
+      <h3 style={{ borderBottom: '1px solid rgba(255,255,255,0.3)', paddingBottom: '10px' }}>登録済みアイテム ({presents.length})</h3>
+      
+      {loadingList ? (
+        <p>読み込み中...</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {presents.map(item => (
+            <div key={item.id} className="glass-panel" style={{ padding: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0,0,0,0.3)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, overflow: 'hidden' }}>
+                <img src={item.imageUrl} alt="" style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</div>
+                  {/* 管理者には価格が見えるようにしておく */}
+                  <div style={{ fontSize: '0.8rem', color: '#ccc' }}>
+                    {item.category} | {item.price ? `¥${Number(item.price).toLocaleString()}` : '-'}
+                  </div>
+                </div>
+              </div>
+              <button 
+                onClick={() => handleDelete(item.id)} 
+                style={{ background: '#d32f2f', color: 'white', border: 'none', borderRadius: '4px', padding: '8px', marginLeft: '10px', cursor: 'pointer' }}
+              >
+                <FaTrash />
+              </button>
+            </div>
+          ))}
+          {presents.length === 0 && <p>まだ登録されていません</p>}
+        </div>
+      )}
     </div>
   );
 };
