@@ -1,0 +1,91 @@
+:root {
+  --bg-color: #0b3d2e; /* Deep Christmas Green */
+  --accent-red: #d42426;
+  --accent-gold: #ffd700;
+  --text-white: #f0f0f0;
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.2);
+}
+
+body {
+  margin: 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-white);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* すりガラス効果 (Glassmorphism) */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ボタン共通スタイル */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-gold), #e6c200);
+  color: #3e2723;
+  font-weight: bold;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+.btn-secondary {
+  background: var(--accent-red);
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-secondary:hover {
+  background: #b71c1c;
+}
+
+/* フォーム入力 */
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  box-sizing: border-box;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--accent-gold);
+}
+
+/* ユーティリティ */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.text-gold { color: var(--accent-gold); }
+.text-center { text-align: center; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
+
+/* スクロールバー */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 4px; }
