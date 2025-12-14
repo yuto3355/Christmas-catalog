@@ -61,14 +61,44 @@ const CatalogPage = () => {
     <div className="container" style={{ position: 'relative', zIndex: 1, paddingBottom: '80px' }}>
       
       {/* パンくずリスト */}
-      <nav style={{ marginBottom: '20px', fontSize: '0.9rem', color: '#ccc', display: 'flex', alignItems: 'center', gap: '5px' }}>
-        <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>ホーム</Link> 
-        <FaChevronRight size={10} /> 
-        <span className="text-gold">カタログ</span>
-      </nav>
+<nav style={{ 
+  marginBottom: '20px', 
+  fontSize: '0.9rem', 
+  color: '#ccc', 
+  display: 'flex', 
+  alignItems: 'center', 
+  gap: '5px',
+  
+  /* --- ★ここから追記・変更 --- */
+  position: 'sticky',   // 固定する設定
+  top: '60px',          // 上のヘッダーの高さ分あける（環境に合わせて調整！）
+  zIndex: 100,          // 他の要素より手前に
+  backgroundColor: '#1a4d3e', // 透けないように背景色を指定（画面の背景色に合わせてください）
+  padding: '10px 0',    // 少し上下に余白をつけて見やすく
+  /* --- ★ここまで --- */
+}}>
+  <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>ホーム</Link> 
+  <FaChevronRight size={10} /> 
+  <span className="text-gold">カタログ</span>
+</nav>
 
       {/* コントロールバー */}
-      <div className="glass-panel" style={{ padding: '15px', marginBottom: '30px', display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center', justifyContent: 'center' }}>
+<div className="glass-panel" style={{ 
+  padding: '15px', 
+  marginBottom: '30px', 
+  display: 'flex', 
+  flexWrap: 'wrap', 
+  gap: '10px', 
+  alignItems: 'center', 
+  justifyContent: 'center',
+  
+  /* --- ★ここから追記・変更 --- */
+  position: 'sticky',
+  top: '100px',         // ヘッダー(60px) + パンくず(約40px) = 100px
+  zIndex: 90,           // パンくずよりは少し後ろ、リストよりは手前
+  backgroundColor: '#1a4d3e', // ここも透けないように背景色を指定
+  /* --- ★ここまで --- */
+}}>
         <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} style={{ width: 'auto', margin: 0, padding: '8px' }}>
           <option value="">全カテゴリ</option>
           {categories.map(c => <option key={c} value={c}>{c}</option>)}
