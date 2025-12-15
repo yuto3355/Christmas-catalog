@@ -34,7 +34,7 @@ const Header = () => {
           fontSize: '0.9rem',
           whiteSpace: 'nowrap' 
         }}>
-          🎁 カタログ
+          カタログ
         </Link>
         <Link to="/admin" style={{ 
           color: 'rgba(255,255,255,0.7)', 
@@ -42,7 +42,7 @@ const Header = () => {
           fontSize: '0.8rem',
           whiteSpace: 'nowrap'
         }}>
-          ⚙️ 管理
+          管理
         </Link>
       </nav>
     </header>

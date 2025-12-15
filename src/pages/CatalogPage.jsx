@@ -159,12 +159,15 @@ const CatalogPage = () => {
           height: '100vh',
           background: 'rgba(0,0,0,0.8)',
           zIndex: 1000,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '20px'
         }}>
-          <div className="glass-panel" style={{ 
+          <div className="glass-panel" style={{
+            // ▼ ここから追加・変更 ▼
+  position: 'absolute',        // 親要素に対して絶対配置にします
+  top: '50%',                  // 上から50%の位置に配置
+  left: '50%',                 // 左から50%の位置に配置
+  transform: 'translate(-50%, -50%)', // 自身のサイズの半分だけ上と左に戻すことで、完全に中央になります
+  width: '90%',                // スマホで見やすいように幅を少し狭めます（左右に余白ができます）
+  // ▲ ここまで ▲ 
             background: 'rgba(20, 40, 30, 0.95)', 
             border: '2px solid var(--accent-gold)',
             width: '100%', 

@@ -61,10 +61,10 @@ const HomePage = () => {
           transition={{ duration: 1 }}
         >
           <h1 style={{ fontSize: '3rem', margin: '20px 0', textShadow: '0 0 10px gold' }}>
-            🎄 Merry Christmas !! 🎁
+            Merry Christmas !!
           </h1>
           <p style={{ fontSize: '1.2rem', marginBottom: '40px', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-            あなただけのお気に入りプレゼントを見つけよう
+            お気に入りプレゼントを探そう
           </p>
           
           <Link to="/catalog" className="btn-primary" style={{ fontSize: '1.5rem', padding: '15px 40px', marginBottom: '60px' }}>
